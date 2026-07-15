@@ -184,8 +184,11 @@
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; background: var(--canvas); }
 body { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
-/* Hard no-cutoff guard: nothing may cause horizontal scroll / clip on phones */
-html, body { max-width: 100%; overflow-x: hidden; }
+/* Hard no-cutoff guard: nothing may cause horizontal scroll / clip on phones.
+ * Use overflow-x: clip (not hidden) — hidden makes body a scroll container and
+ * breaks position: sticky on the header; clip prevents sideways scroll without
+ * creating a scroll container, so the sticky header keeps working. */
+html, body { max-width: 100%; overflow-x: hidden; overflow-x: clip; }
 @media (max-width: 700px) {
   img, svg, video, iframe { max-width: 100%; }
 }
