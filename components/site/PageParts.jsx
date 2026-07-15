@@ -174,28 +174,8 @@ export function WorkImage({ src, alt, label, bg = "var(--cream)", ratio = "16 / 
 /* Live website showcase — the real site rendered inside browser-window chrome,
  * scaled down to a static preview (interaction disabled), with a visit link. */
 export function SiteShowcase({ url, host, title, blurb, tags = [], shot }) {
-  const RENDER_W = 1280;
-  const wrapRef = useRef(null);
-  const measureRef = useRef(null);
-  const [scale, setScale] = useState(0.5);
   const [hover, setHover] = useState(false);
-  useEffect(() => {
-    const fit = () => {
-      const el = measureRef.current;
-      if (el && el.clientWidth > 0) {
-        const next = el.clientWidth / RENDER_W;
-        setScale((prev) => (Math.abs(prev - next) < 0.001 ? prev : next));
-      }
-    };
-    fit();
-    const t1 = setTimeout(fit, 120);
-    const t2 = setTimeout(fit, 500);
-    const ro = new ResizeObserver(() => requestAnimationFrame(fit));
-    if (measureRef.current) ro.observe(measureRef.current);
-    window.addEventListener("resize", fit);
-    return () => { clearTimeout(t1); clearTimeout(t2); ro.disconnect(); window.removeEventListener("resize", fit); };
-  }, []);
-  const viewH = 666;
+  const shotSrc = shot && shot.fallback ? shot.fallback : null;
   return (
     <div className="r-stack" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.5fr) minmax(0, 0.7fr)", gap: 28, alignItems: "center" }}>
       <div style={{ borderRadius: "var(--radius-lg)", overflow: "hidden", border: "1px solid var(--hairline)", background: "var(--cream)", boxShadow: "0 40px 90px -44px rgba(44,44,42,0.5)" }}>
@@ -211,12 +191,13 @@ export function SiteShowcase({ url, host, title, blurb, tags = [], shot }) {
           </div>
           <span style={{ width: 46 }} />
         </div>
-        <div ref={measureRef} aria-hidden style={{ height: 0, width: "100%", overflow: "hidden" }} />
-        <div ref={wrapRef} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} style={{ position: "relative", width: "100%", height: viewH * scale, overflow: "hidden", background: "#1a2129" }}>
-          <iframe
-            src={url} title={title} scrolling="no" tabIndex={-1} aria-hidden="true" onLoad={() => { const el = measureRef.current; if (el && el.clientWidth > 0) setScale(el.clientWidth / RENDER_W); }}
-            style={{ position: "absolute", top: 0, left: 0, width: RENDER_W, height: viewH, border: 0, transform: `scale(${scale})`, transformOrigin: "top left", pointerEvents: "none" }}
-          />
+        <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} style={{ position: "relative", width: "100%", aspectRatio: "1530 / 778", overflow: "hidden", background: "#1a2129" }}>
+          {shotSrc ? (
+            <img
+              src={shotSrc} alt={title} loading="lazy" draggable={false}
+              style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", border: 0, pointerEvents: "none" }}
+            />
+          ) : null}
           <div aria-hidden style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 88, background: "linear-gradient(to bottom, transparent, rgba(26,33,41,0.9))", pointerEvents: "none", opacity: hover ? 0.35 : 1, transition: "opacity var(--t-base)" }} />
           <div aria-hidden style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: hover ? "rgba(26,33,41,0.28)" : "transparent", transition: "background var(--t-base)", pointerEvents: "none" }}>
             <span style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 18px", borderRadius: "var(--radius-pill)", background: "var(--cream)", border: "1px solid var(--hairline)", boxShadow: "0 12px 30px -14px rgba(20,20,19,0.5)", fontFamily: "var(--font-sans)", fontSize: 13.5, fontWeight: 600, color: "var(--charcoal)", opacity: hover ? 1 : 0, transform: hover ? "translateY(0) scale(1)" : "translateY(6px) scale(0.98)", transition: "opacity var(--t-base), transform var(--t-base)" }}>
