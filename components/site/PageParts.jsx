@@ -132,8 +132,11 @@ export function RateRow({ name, price, description, badge, details, onBook, big 
                     <span style={{ fontFamily: "var(--font-sans)", fontSize: 14, lineHeight: 1.45, color: "var(--body)" }}>{inc}</span>
                   </div>
                 ))}
-                <div style={{ marginTop: 14 }}>
-                  <button onClick={() => onBook && onBook(name)} style={{ fontFamily: "var(--font-sans)", fontSize: 13.5, fontWeight: 600, color: "var(--accent)", background: "transparent", border: "none", padding: 0, cursor: "pointer" }}>Book this →</button>
+                <div style={{ marginTop: 16 }}>
+                  <button onClick={() => onBook && onBook(name)} className="pp-book" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 600, letterSpacing: "-0.1px", color: "var(--accent)", background: "color-mix(in srgb, var(--accent) 12%, transparent)", border: "1px solid color-mix(in srgb, var(--accent) 32%, transparent)", borderRadius: "var(--radius-pill)", padding: "8px 14px", cursor: "pointer", transition: "background var(--t-quick), color var(--t-quick), border-color var(--t-quick), transform var(--t-quick)" }}>
+                    Book this
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ display: "block" }}><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </button>
                 </div>
               </div>
             </div>

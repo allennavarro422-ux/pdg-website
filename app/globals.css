@@ -199,6 +199,8 @@ html, body { max-width: 100%; overflow-x: hidden; overflow-x: clip; }
 .pdg-ctabtn:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -14px rgba(44,44,42,0.6); }
 .pdg-ctabtn:active { transform: translateY(0) scale(0.98); }
 .pdg-bookbtn:hover { filter: brightness(0.97); transform: translateY(-1px); }
+.pp-book:hover { background: var(--accent) !important; color: var(--cream) !important; border-color: var(--accent) !important; transform: translateY(-1px); }
+.pp-book:active { transform: translateY(0); }
 .pdg-bookbtn:active { transform: translateY(0); }
 
 /* ---- Mobile navigation ---- */
