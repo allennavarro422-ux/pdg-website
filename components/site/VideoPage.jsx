@@ -439,11 +439,14 @@ function VX_Reel({ onNavigate }) {
                 </div>
                 <div>
                   {t.items.map((it, ii) => (
-                    <button
+                    <div
                       key={it.name}
                       className="vx-row"
+                      role="button"
+                      tabIndex={0}
                       onClick={() => onNavigate("contact", it.name)}
-                      style={{ width: "100%", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: 16, padding: "17px 24px", background: "transparent", border: "none", borderTop: ii === 0 ? "none" : `1px solid ${VX.lineSoft}`, transition: "background var(--t-quick)" }}
+                      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onNavigate("contact", it.name); } }}
+                      style={{ width: "100%", textAlign: "left", cursor: "pointer", display: "flex", alignItems: "center", gap: 16, padding: "17px 24px", background: "transparent", borderTop: ii === 0 ? "none" : `1px solid ${VX.lineSoft}`, transition: "background var(--t-quick)" }}
                     >
                       <span style={{ minWidth: 0, flex: 1 }}>
                         <span style={{ display: "flex", alignItems: "center", gap: 9 }}>
@@ -457,10 +460,15 @@ function VX_Reel({ onNavigate }) {
                         <span style={{ fontSize: 20, fontWeight: 700, letterSpacing: "-0.6px" }}>{it.price}</span>
                         {it.unit && <span style={{ fontSize: 12.5, color: "var(--muted)", fontWeight: 500 }}>{it.unit}</span>}
                       </span>
-                      <span className="vx-row-arrow" aria-hidden="true" style={{ flex: "0 0 auto", color: "var(--violet)", display: "grid", placeItems: "center", transition: "transform var(--t-quick), opacity var(--t-quick)" }}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                      </span>
-                    </button>
+                      <button
+                        className="vx-book"
+                        onClick={(e) => { e.stopPropagation(); onNavigate("contact", it.name); }}
+                        style={{ flex: "0 0 auto", display: "inline-flex", alignItems: "center", gap: 6, cursor: "pointer", fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 600, letterSpacing: "-0.1px", color: "var(--violet)", background: VX.violetTint, border: "1px solid color-mix(in srgb, var(--violet) 32%, transparent)", borderRadius: "var(--radius-pill)", padding: "8px 14px", whiteSpace: "nowrap", transition: "background var(--t-quick), color var(--t-quick), border-color var(--t-quick), transform var(--t-quick)" }}
+                      >
+                        Book this
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ display: "block" }}><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                      </button>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -579,14 +587,19 @@ function VideoStyles() {
       .vx-cta:hover { transform: translateY(-2px); background: color-mix(in srgb, var(--violet) 88%, #000); }
       .vx-step:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--violet) 40%, transparent); }
       .vx-pack:hover { transform: translateY(-5px); border-color: color-mix(in srgb, var(--violet) 45%, transparent); }
-      .vx-row-arrow { opacity: 0; transform: translateX(-4px); }
       .vx-row:hover { background: color-mix(in srgb, var(--violet) 6%, transparent); }
-      .vx-row:hover .vx-row-arrow { opacity: 1; transform: translateX(0); }
+      .vx-book { margin-left: auto; }
+      .vx-book:hover { background: var(--violet); color: var(--cream); border-color: var(--violet); transform: translateY(-1px); }
+      .vx-book:active { transform: translateY(0); }
 
       @media (max-width: 860px) {
         [data-line="video"] .vx-hero-grid,
         [data-line="video"] .vx-2col,
         [data-line="video"] .vx-reelgrid { grid-template-columns: 1fr !important; }
+      }
+      @media (max-width: 520px) {
+        [data-line="video"] .vx-row { flex-wrap: wrap; row-gap: 12px; }
+        [data-line="video"] .vx-row > span:first-child { flex: 1 1 100% !important; }
       }
       @media (max-width: 640px) {
         [data-line="video"] .vx-workgrid { grid-template-columns: 1fr !important; }
