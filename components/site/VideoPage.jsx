@@ -47,7 +47,7 @@ export function VideoPage({ onNavigate }) {
       <VX_Hero onNavigate={onNavigate} />
       <VX_Pipeline />
       <VX_Work />
-      <VX_Formats />
+      <VX_Gear />
       <VX_Reel onNavigate={onNavigate} />
       <VX_Closing onNavigate={onNavigate} />
     </div>
@@ -271,53 +271,80 @@ function VX_Pipeline() {
   );
 }
 
-/* ============================ FORMATS ============================ */
-function VX_Formats() {
-  const fmts = [
-    { k: "wide", label: "16:9", use: "YouTube & site" },
-    { k: "square", label: "1:1", use: "Feed" },
-    { k: "vert", label: "9:16", use: "Reels · TikTok · Shorts" },
+/* ============================ THE KIT (gear) ============================ */
+function VX_Gear() {
+  const specs = [
+    { b: "4K", t: "up to 120fps" },
+    { b: "10-bit", t: "4:2:2 color" },
+    { b: "S-Cinetone", t: "cinema look" },
+  ];
+  const gear = [
+    { icon: "mic", t: "Professional audio", d: "Shotgun and wireless lav mics for broadcast-clean dialogue." },
+    { icon: "light", t: "Shaped lighting & glass", d: "Portable LED kit and fast prime lenses for any location." },
   ];
   return (
     <section style={{ position: "relative", borderTop: `1px solid ${VX.lineSoft}`, background: VX.panelSoft, padding: "66px 0" }}>
       <div className="vx-2col" style={{ maxWidth: "var(--content-max)", margin: "0 auto", padding: "0 var(--content-gutter)", display: "grid", gridTemplateColumns: "minmax(0, 0.95fr) minmax(0, 1.05fr)", gap: 48, alignItems: "center" }}>
         <div>
-          <Reveal><span style={{ fontFamily: VX.mono, fontSize: 12, letterSpacing: "2px", textTransform: "uppercase", color: "var(--violet)" }}>Every format</span></Reveal>
-          <Reveal delay={70}><h2 style={{ margin: "12px 0 0", fontFamily: "var(--font-sans)", fontSize: "clamp(30px, 4vw, 46px)", fontWeight: 700, letterSpacing: "-1.5px", lineHeight: 1.04, color: "var(--charcoal)" }}>One shoot.<br />Every&nbsp;format.</h2></Reveal>
-          <Reveal delay={140} as="p" style={{ margin: "20px 0 0", maxWidth: 400, fontFamily: "var(--font-sans)", fontSize: 17, lineHeight: 1.6, color: "var(--muted)" }}>
-            The same day on camera reframes and exports to wherever your audience already scrolls, with no reshoots and no extra invoices.
+          <Reveal><span style={{ fontFamily: VX.mono, fontSize: 12, letterSpacing: "2px", textTransform: "uppercase", color: "var(--violet)" }}>The kit</span></Reveal>
+          <Reveal delay={70}><h2 style={{ margin: "12px 0 0", fontFamily: "var(--font-sans)", fontSize: "clamp(30px, 4vw, 46px)", fontWeight: 700, letterSpacing: "-1.5px", lineHeight: 1.04, color: "var(--charcoal)" }}>Shot on real<br />cinema gear.</h2></Reveal>
+          <Reveal delay={140} as="p" style={{ margin: "20px 0 0", maxWidth: 420, fontFamily: "var(--font-sans)", fontSize: 17, lineHeight: 1.6, color: "var(--muted)" }}>
+            Every project is filmed on a Sony FX30 cinema camera with professional audio and shaped lighting, so your footage looks and sounds like a studio made it, not a phone.
           </Reveal>
           <Reveal delay={210} style={{ marginTop: 24, display: "flex", flexWrap: "wrap", gap: 10 }}>
-            {fmts.map((f) => (
-              <span key={f.k} style={{ display: "inline-flex", alignItems: "center", gap: 8, fontFamily: VX.mono, fontSize: 12.5, color: "var(--charcoal)", background: VX.violetTint, border: `1px solid ${VX.line}`, borderRadius: "var(--radius-pill)", padding: "8px 14px" }}>
-                <b style={{ color: "var(--violet)" }}>{f.label}</b> {f.use}
+            {specs.map((s) => (
+              <span key={s.b} style={{ display: "inline-flex", alignItems: "center", gap: 8, fontFamily: VX.mono, fontSize: 12.5, color: "var(--charcoal)", background: VX.violetTint, border: `1px solid ${VX.line}`, borderRadius: "var(--radius-pill)", padding: "8px 14px" }}>
+                <b style={{ color: "var(--violet)" }}>{s.b}</b> {s.t}
               </span>
             ))}
           </Reveal>
         </div>
 
-        <Reveal delay={120} style={{ display: "grid", placeItems: "center", minHeight: 380 }}>
-          <div className="vx-fmt-stage" aria-hidden="true">
-            <div aria-hidden="true" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 320, height: 320, borderRadius: "50%", background: `radial-gradient(circle, ${VX.glow}, transparent 65%)`, filter: "blur(12px)" }} />
-
-            <div className="vx-fmt vx-fmt-wide">
-              <span aria-hidden="true" className="vx-scan" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent, rgba(255,255,255,0.12), transparent)", height: "45%" }} />
-              <span className="vx-fmt-label">16:9</span>
-            </div>
-
-            <div className="vx-fmt vx-fmt-square">
-              <span aria-hidden="true" className="vx-scan" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent, rgba(255,255,255,0.12), transparent)", height: "45%", animationDelay: "1.1s" }} />
-              <span className="vx-fmt-label">1:1</span>
-            </div>
-
-            <div className="vx-fmt vx-fmt-vert">
-              <span aria-hidden="true" className="vx-scan" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent, rgba(255,255,255,0.14), transparent)", height: "38%", animationDelay: "2.2s" }} />
-              <span className="vx-fmt-label">9:16</span>
-              <span className="vx-fmt-play">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8 5l12 7-12 7z" fill="#fff" /></svg>
+        {/* Gear stack: featured camera card + supporting gear rows */}
+        <Reveal delay={120} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          {/* Featured: Sony FX30 (dark cinema-camera surface) */}
+          <div className="vx-gearcard vx-gear-hero" style={{ position: "relative", borderRadius: 18, background: VXD.panel, border: `1px solid ${VXD.line}`, overflow: "hidden", boxShadow: "0 40px 80px -46px color-mix(in srgb, var(--violet) 40%, #000)", transition: "transform var(--t-base)" }}>
+            <div aria-hidden="true" className="vx-glow" style={{ position: "absolute", top: "-40%", right: "-20%", width: 360, height: 360, borderRadius: "50%", background: `radial-gradient(circle, color-mix(in srgb, var(--violet) 40%, transparent), transparent 64%)`, filter: "blur(18px)", pointerEvents: "none" }} />
+            {/* header */}
+            <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 10, padding: "15px 20px", borderBottom: `1px solid ${VXD.lineSoft}` }}>
+              <span style={{ fontFamily: VX.mono, fontSize: 11.5, letterSpacing: "1.5px", color: "var(--stone)" }}>SONY</span>
+              <span style={{ fontFamily: "var(--font-sans)", fontSize: 17, fontWeight: 700, letterSpacing: "-0.4px", color: "var(--cream)" }}>FX30</span>
+              <span style={{ fontFamily: VX.mono, fontSize: 10.5, letterSpacing: "1px", color: "var(--violet-light)", marginLeft: 4, border: "1px solid rgba(255,255,255,0.16)", borderRadius: 6, padding: "2px 7px" }}>CINEMA LINE</span>
+              <span style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: 7, fontFamily: VX.mono, fontSize: 11, color: "var(--stone)" }}>
+                <span className="vx-rec" style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--coral)" }} />REC
               </span>
             </div>
+            {/* lens */}
+            <div style={{ position: "relative", display: "grid", placeItems: "center", padding: "32px 20px 24px" }}>
+              <div className="vx-lens" style={{ position: "relative", width: 132, height: 132, borderRadius: "50%", background: "radial-gradient(circle at 38% 34%, #4b4a58 0%, #17171d 44%, #08080b 100%)", border: "1px solid rgba(255,255,255,0.14)", boxShadow: "inset 0 0 0 6px rgba(255,255,255,0.04), inset 0 0 26px rgba(0,0,0,0.8), 0 18px 40px -22px #000" }}>
+                <span style={{ position: "absolute", inset: 16, borderRadius: "50%", border: "1px solid rgba(255,255,255,0.10)" }} />
+                <span style={{ position: "absolute", inset: 30, borderRadius: "50%", background: "radial-gradient(circle at 40% 36%, #26242f 0%, #0b0b0f 70%)", border: "1px solid rgba(255,255,255,0.06)" }} />
+                <span style={{ position: "absolute", inset: 48, borderRadius: "50%", background: "radial-gradient(circle at 42% 38%, color-mix(in srgb, var(--violet) 60%, #000), #050507 72%)", boxShadow: "0 0 18px 1px color-mix(in srgb, var(--violet) 55%, transparent)" }} />
+                {/* coating catchlight */}
+                <span aria-hidden="true" style={{ position: "absolute", top: 24, left: 30, width: 26, height: 14, borderRadius: "50%", background: "rgba(255,255,255,0.5)", filter: "blur(4px)" }} />
+                <span aria-hidden="true" style={{ position: "absolute", bottom: 26, right: 30, width: 12, height: 12, borderRadius: "50%", background: "color-mix(in srgb, var(--violet-light) 80%, transparent)", filter: "blur(3px)" }} />
+              </div>
+            </div>
+            {/* spec strip */}
+            <div style={{ position: "relative", display: "flex", justifyContent: "center", gap: 0, borderTop: `1px solid ${VXD.lineSoft}` }}>
+              {["4K", "120 FPS", "10-BIT", "S35"].map((s, i) => (
+                <span key={s} style={{ flex: 1, textAlign: "center", padding: "13px 4px", fontFamily: VX.mono, fontSize: 11.5, letterSpacing: "0.5px", color: "var(--cream)", borderLeft: i === 0 ? "none" : `1px solid ${VXD.lineSoft}` }}>{s}</span>
+              ))}
+            </div>
           </div>
+
+          {/* Supporting gear rows */}
+          {gear.map((g) => (
+            <div key={g.t} className="vx-gearcard vx-gearrow" style={{ display: "flex", alignItems: "center", gap: 16, borderRadius: 16, background: VX.panel, border: `1px solid ${VX.line}`, padding: "16px 18px", transition: "transform var(--t-base), border-color var(--t-base)" }}>
+              <span style={{ width: 44, height: 44, flex: "0 0 auto", borderRadius: 12, background: "color-mix(in srgb, var(--violet) 12%, transparent)", border: `1px solid ${VX.line}`, display: "grid", placeItems: "center", color: "var(--violet)" }}>
+                <VX_Icon name={g.icon} />
+              </span>
+              <span style={{ minWidth: 0 }}>
+                <span style={{ display: "block", fontFamily: "var(--font-sans)", fontSize: 16, fontWeight: 700, letterSpacing: "-0.3px", color: "var(--charcoal)" }}>{g.t}</span>
+                <span style={{ display: "block", marginTop: 2, fontFamily: "var(--font-sans)", fontSize: 13.5, lineHeight: 1.45, color: "var(--muted)" }}>{g.d}</span>
+              </span>
+            </div>
+          ))}
         </Reveal>
       </div>
     </section>
@@ -477,6 +504,8 @@ function VX_Icon({ name }) {
   if (name === "camera") return <svg {...p}><path d="M3 7h11v10H3z" /><path d="M14 10l7-3v10l-7-3" /></svg>;
   if (name === "scissors") return <svg {...p}><circle cx="6" cy="6" r="3" /><circle cx="6" cy="18" r="3" /><path d="M20 4L8.5 15.5M14.5 14L20 20M8.5 8.5L11 11" /></svg>;
   if (name === "cc") return <svg {...p}><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M10 10.5a2 2 0 100 3M16 10.5a2 2 0 100 3" /></svg>;
+  if (name === "mic") return <svg {...p}><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M6 11a6 6 0 0012 0M12 17v4M8.5 21h7" /></svg>;
+  if (name === "light") return <svg {...p}><circle cx="12" cy="12" r="3.6" /><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M18.5 5.5l-1.7 1.7M7.2 16.8l-1.7 1.7" /></svg>;
   return <svg {...p}><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z" /></svg>;
 }
 
@@ -515,6 +544,8 @@ function VideoStyles() {
       }
 
       .vx-rec { animation: vxRecPulse 1.4s var(--ease-house) infinite; }
+      .vx-gearrow:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--violet) 40%, transparent); }
+      .vx-gear-hero:hover { transform: translateY(-3px); }
       .vx-word { display: inline-block; animation: vxWordIn 0.7s var(--ease-house) both; }
       .vx-word-2 { animation-delay: 0.1s; }
       .vx-word-3 { animation-delay: 0.2s; }
