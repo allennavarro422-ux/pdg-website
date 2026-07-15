@@ -217,6 +217,14 @@ html, body { max-width: 100%; overflow-x: hidden; overflow-x: clip; }
   .pdg-bookbtn { padding: 0 12px !important; }
 }
 .pdg-mobilepanel a, .pdg-mobilepanel button { -webkit-tap-highlight-color: transparent; }
+/* ---- Cinematic mobile nav overlay ---- */
+.pdg-navovl button { -webkit-tap-highlight-color: transparent; }
+@keyframes pdg-ovl-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pdg-ovl-veil { from { transform: scale(1.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes pdg-navrise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .pdg-navovl, .pdg-navovl * { animation: none !important; }
+}
 
 /* ================= Mobile-first layout ================= */
 @media (max-width: 900px) { :root { --content-gutter: 20px; } }

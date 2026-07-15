@@ -2,7 +2,8 @@
 /* PDG site header — master coral wordmark, four standalone service tabs
  * (Design, Branding, Video, Packages), each its own page, and a constant
  * "Book with us". The active tab is highlighted in its own service accent. */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 const HEADER_TABS = [
   { key: "home", label: "Home", accent: "var(--coral)" },
@@ -14,8 +15,21 @@ const HEADER_TABS = [
 
 export function Header({ active, onNavigate }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const bookAccent = (HEADER_TABS.find((t) => t.key === active) || {}).accent || "var(--coral)";
   const nav = (key) => { setMenuOpen(false); onNavigate(key); };
+
+  useEffect(() => { setMounted(true); }, []);
+
+  // Lock body scroll + close on Escape while the cinematic overlay is open.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e) => { if (e.key === "Escape") setMenuOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => { document.body.style.overflow = prev; window.removeEventListener("keydown", onKey); };
+  }, [menuOpen]);
   return (
     <header
       style={{
@@ -130,49 +144,99 @@ export function Header({ active, onNavigate }) {
         </div>
       </div>
 
-      <div
-        className="pdg-mobilepanel"
-        style={{
-          overflow: "hidden",
-          borderTop: menuOpen ? "1px solid var(--hairline)" : "1px solid transparent",
-          maxHeight: menuOpen ? 420 : 0,
-          opacity: menuOpen ? 1 : 0,
-          transition: "max-height 300ms var(--ease-house), opacity 200ms var(--ease-house), border-color 200ms var(--ease-house)",
-          background: "color-mix(in srgb, var(--canvas) 96%, transparent)",
-        }}
-      >
-        <nav style={{ maxWidth: "var(--content-max)", margin: "0 auto", padding: "10px var(--content-gutter) 18px", display: "flex", flexDirection: "column", gap: 4 }}>
-          {HEADER_TABS.map((t) => {
-            const on = active === t.key;
-            return (
-              <button
-                key={t.key}
-                onClick={() => nav(t.key)}
-                style={{
-                  display: "flex", alignItems: "center", gap: 12, width: "100%", textAlign: "left",
-                  padding: "13px 14px", borderRadius: "var(--radius-md)", cursor: "pointer", border: "none",
-                  background: on ? "var(--surface-card)" : "transparent",
-                  fontFamily: "var(--font-sans)", fontSize: 16, fontWeight: on ? 600 : 500,
-                  color: on ? t.accent : "var(--charcoal)",
-                }}
-              >
-                <span style={{ width: 8, height: 8, borderRadius: "50%", background: t.accent, flex: "0 0 auto", opacity: on ? 1 : 0.5 }} />
-                {t.label}
-              </button>
-            );
-          })}
-          <button
-            onClick={() => nav("contact")}
+      {/* Cinematic full-screen mobile nav overlay — portalled to <body> so it
+          escapes the backdrop-filtered header's fixed-position containing block. */}
+      {mounted && menuOpen && createPortal(
+        <div
+          className="pdg-navovl"
+          style={{
+            position: "fixed", inset: 0, zIndex: 200,
+            display: "flex", flexDirection: "column",
+            background: "var(--canvas)",
+            animation: "pdg-ovl-in 260ms var(--ease-house) both",
+            overflow: "hidden",
+          }}
+        >
+          {/* Warm accent veil behind the list */}
+          <div
+            aria-hidden="true"
             style={{
-              marginTop: 8, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8,
-              height: 48, borderRadius: "var(--radius-pill)", cursor: "pointer", border: "none",
-              background: bookAccent, color: "var(--cream)", fontFamily: "var(--font-sans)", fontSize: 15.5, fontWeight: 600,
+              position: "absolute", top: "-24%", right: "-30%", width: "90vw", height: "90vw", maxWidth: 620, maxHeight: 620,
+              borderRadius: "50%", pointerEvents: "none",
+              background: `radial-gradient(circle, color-mix(in srgb, ${bookAccent} 22%, transparent), transparent 68%)`,
+              filter: "blur(20px)",
+              animation: "pdg-ovl-veil 900ms var(--ease-slow) both",
             }}
-          >
-            Book with us
-          </button>
-        </nav>
-      </div>
+          />
+
+          {/* Top bar: wordmark + close */}
+          <div style={{ position: "relative", flex: "0 0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px var(--content-gutter)" }}>
+            <span style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: 24, letterSpacing: "-1.08px", lineHeight: 1, color: "var(--charcoal)" }}>
+              PDG<span style={{ color: bookAccent }}>.</span>
+            </span>
+            <button
+              onClick={() => setMenuOpen(false)}
+              aria-label="Close menu"
+              style={{
+                width: 44, height: 44, display: "inline-flex", alignItems: "center", justifyContent: "center",
+                borderRadius: "var(--radius-pill)", cursor: "pointer", padding: 0, color: "var(--charcoal)",
+                background: "var(--surface-card)", border: "1px solid var(--hairline)",
+              }}
+            >
+              <svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                <path d="M2 2L15 15M15 2L2 15" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Nav list — staggered cinematic rise */}
+          <nav style={{ position: "relative", flex: "1 1 auto", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 var(--content-gutter)", minHeight: 0 }}>
+            {HEADER_TABS.map((t, i) => {
+              const on = active === t.key;
+              return (
+                <button
+                  key={t.key}
+                  onClick={() => nav(t.key)}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 18, width: "100%", textAlign: "left",
+                    padding: "14px 4px", cursor: "pointer", border: "none", background: "none",
+                    borderBottom: "1px solid var(--hairline)",
+                    animation: `pdg-navrise 560ms var(--ease-house) both`,
+                    animationDelay: `${120 + i * 70}ms`,
+                  }}
+                >
+                  <span style={{ fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 500, fontVariantNumeric: "tabular-nums", color: on ? bookAccent : "var(--muted)", width: 24, flex: "0 0 auto" }}>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span style={{ width: 9, height: 9, borderRadius: "50%", background: t.accent, flex: "0 0 auto", boxShadow: on ? `0 0 0 4px color-mix(in srgb, ${t.accent} 30%, transparent)` : "none" }} />
+                  <span style={{ flex: 1, fontFamily: "var(--font-sans)", fontSize: "clamp(30px, 9vw, 40px)", fontWeight: 600, letterSpacing: "-1.2px", lineHeight: 1.05, color: on ? t.accent : "var(--charcoal)" }}>
+                    {t.label}
+                  </span>
+                  <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke={on ? bookAccent : "var(--stone)"} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" style={{ flex: "0 0 auto" }}>
+                    <path d="M6 16L16 6M16 6H8M16 6V14" />
+                  </svg>
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* Book with us CTA */}
+          <div style={{ position: "relative", flex: "0 0 auto", padding: "0 var(--content-gutter) calc(24px + env(safe-area-inset-bottom))", animation: "pdg-navrise 560ms var(--ease-house) both", animationDelay: `${120 + HEADER_TABS.length * 70}ms` }}>
+            <button
+              onClick={() => nav("contact")}
+              style={{
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 9, width: "100%",
+                height: 56, borderRadius: "var(--radius-pill)", cursor: "pointer", border: "none",
+                background: bookAccent, color: "var(--cream)", fontFamily: "var(--font-sans)", fontSize: 17, fontWeight: 600, letterSpacing: "-0.2px",
+              }}
+            >
+              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--cream)", flex: "0 0 auto" }} />
+              Book with us
+            </button>
+          </div>
+        </div>,
+        document.body
+      )}
     </header>
   );
 }
