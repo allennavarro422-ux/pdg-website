@@ -31,6 +31,42 @@ export function ContactPage({ preselectService }) {
   const [date, setDate] = useState(null);
   const [time, setTime] = useState(null);
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (sending) return;
+    setError("");
+    setSending(true);
+    const fd = new FormData(e.currentTarget);
+    const payload = {
+      name: fd.get("name"),
+      email: fd.get("email"),
+      business: fd.get("business"),
+      phone: fd.get("phone"),
+      service: service,
+      message: fd.get("message"),
+      date: date ? fmt(date) : "",
+      time: time || "",
+    };
+    try {
+      const res = await fetch("/api/book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || "Something went wrong. Please try again.");
+      }
+      setSent(true);
+    } catch (err) {
+      setError(err.message || "Something went wrong. Please try again.");
+    } finally {
+      setSending(false);
+    }
+  };
 
   const first = new Date(view.y, view.m, 1);
   const lead = (first.getDay() + 6) % 7;
@@ -78,17 +114,23 @@ export function ContactPage({ preselectService }) {
     <ContactShell
       footer={
         <>
-          <Button variant="coral" size="lg" type="submit" form="pdg-contact-form" full disabled={!(date && time)}>
-            {date && time ? "Book with us" : "Pick a time to continue"}
+          <Button variant="coral" size="lg" type="submit" form="pdg-contact-form" full disabled={!(date && time) || sending}>
+            {sending ? "Sending…" : date && time ? "Book with us" : "Pick a time to continue"}
           </Button>
-          <p style={{ margin: 0, fontFamily: "var(--font-sans)", fontSize: 12.5, color: "var(--muted)", textAlign: "center" }}>
-            15 minutes. No pitch. No pressure.
-          </p>
+          {error ? (
+            <p style={{ margin: 0, fontFamily: "var(--font-sans)", fontSize: 12.5, color: "var(--coral)", textAlign: "center" }}>
+              {error}
+            </p>
+          ) : (
+            <p style={{ margin: 0, fontFamily: "var(--font-sans)", fontSize: 12.5, color: "var(--muted)", textAlign: "center" }}>
+              15 minutes. No pitch. No pressure.
+            </p>
+          )}
         </>
       }
     >
       {/* Form */}
-      <form id="pdg-contact-form" onSubmit={(e) => { e.preventDefault(); setSent(true); }} style={{ background: "var(--cream)", border: "1px solid var(--hairline)", borderRadius: "var(--radius-xl)", padding: 23, display: "flex", flexDirection: "column", gap: 16 }}>
+      <form id="pdg-contact-form" onSubmit={handleSubmit} style={{ background: "var(--cream)", border: "1px solid var(--hairline)", borderRadius: "var(--radius-xl)", padding: 23, display: "flex", flexDirection: "column", gap: 16 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: "var(--radius-md)", background: date && time ? "var(--coral-tint)" : "var(--surface-card)", border: "1px solid", borderColor: date && time ? "var(--coral-soft)" : "var(--hairline)" }}>
           <span style={{ width: 8, height: 8, borderRadius: "50%", background: date && time ? "var(--coral)" : "var(--stone)" }} />
           <span style={{ fontFamily: "var(--font-sans)", fontSize: 13.5, fontWeight: 500, color: "var(--charcoal)" }}>
@@ -96,15 +138,15 @@ export function ContactPage({ preselectService }) {
           </span>
         </div>
         <div className="r-stack-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-          <Input label="Name" placeholder="Jane Smith" required />
-          <Input label="Email" type="email" placeholder="jane@business.com" required />
+          <Input label="Name" name="name" placeholder="Jane Smith" required />
+          <Input label="Email" name="email" type="email" placeholder="jane@business.com" required />
         </div>
         <div className="r-stack-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-          <Input label="Business" placeholder="Reyes Realty" />
-          <Input label="Phone" type="tel" placeholder="(214) 555-0142" />
+          <Input label="Business" name="business" placeholder="Reyes Realty" />
+          <Input label="Phone" name="phone" type="tel" placeholder="(214) 555-0142" />
         </div>
-        <Select label="What service are you interested in?" placeholder="Choose a service" options={serviceOptions} value={service} onChange={(e) => setService(e.target.value)} />
-        <Textarea label="What can we help with?" rows={4} placeholder="Tell us a little about your business and what you're hoping to do." />
+        <Select label="What service are you interested in?" name="service" placeholder="Choose a service" options={serviceOptions} value={service} onChange={(e) => setService(e.target.value)} />
+        <Textarea label="What can we help with?" name="message" rows={4} placeholder="Tell us a little about your business and what you're hoping to do." />
       </form>
 
       {/* Calendar */}
